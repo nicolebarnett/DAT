@@ -1,0 +1,422 @@
+use Master
+go
+drop database if exists Spaces
+go
+create database Spaces 
+go 
+use Spaces 
+go 
+
+drop procedure if exists MakeTables;
+go
+create procedure MakeTables
+as
+begin
+
+drop table if exists tblSensor
+drop table if exists tblCustomer
+drop table if exists tblContract
+drop table if exists tblStream
+drop table if exists tblPart
+drop table if exists tblLocation
+drop table if exists tblEmployee
+drop table if exists tblRole
+drop table if exists tblData
+drop table if exists tblPart
+drop table if exists tblSupplier
+drop table if exists tblZoneType
+drop table if exists tblLocation
+drop table if exists tblStandard
+drop table if exists tblGold
+drop table if exists tblPlatinum 
+drop table if exists tblSuperPlatinum
+
+create table tblStream(
+StreamID int Identity (00000000001,1) Primary Key, 
+Description int
+);
+
+create table tblPart(
+PartID int Identity (000000001,1) Primary Key,
+Description int
+);
+
+create table tblLocation(
+LocationID int Identity (00000001,1) Primary Key,
+Description int
+);
+
+create table tblRole(
+RoleType int Identity (001,1) Primary Key,
+Description int,
+);
+
+create table tblZoneType(
+ZoneID int Identity (01,1) Primary Key,
+Description int
+);
+
+create table tblEmployee(
+EmployeeID int Identity (0001,1) Primary Key,
+EmployeeRole int Foreign Key References tblRole(RoleType),
+);
+
+
+
+
+
+create table tblContract(
+ContractID int Identity (001,1) Primary Key,
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+CustomerID int default 0,
+SensorID int,
+);
+
+create table tblSensor (
+SensorID int Identity(000000001,1) Primary Key,
+ContractID int Foreign Key References tblContract(ContractID),
+LocationID int Foreign Key References tblLocation(LocationID),
+ZoneID int Foreign Key References tblZoneType(ZoneID),
+PartID int Foreign Key References tblPart(PartID),
+StreamID int Foreign Key References tblStream(StreamID)
+);
+
+create table tblCustomer(
+CustomerID int Identity (00000000001,1)Primary Key,
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+Name int,
+Email int,
+ContractID int Foreign Key References tblContract(ContractID),
+);
+
+
+
+
+
+
+
+
+
+create table tblData(
+DataID int Identity (00000000000001,1) Primary Key,
+SensorID int Foreign Key References tblSensor(SensorID),
+StreamID int Foreign Key References tblStream(StreamID),
+ContractID int Foreign Key References tblContract(ContractID)
+);
+
+create table tblSupplier(
+SupplierID int Identity (001,1) Primary Key,
+PartID int Foreign Key References tblPart(PartID),
+);
+
+
+
+create table tblStandard(
+SID int Identity (000001,1) Primary Key,
+ContractID int Foreign Key References tblContract(ContractID),
+CustomerID int Foreign Key References tblCustomer(CustomerID),
+SensorID int Foreign Key References tblSensor(SensorID),
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+ViewCount int default 0,
+);
+
+create table tblGold(
+GID int Identity (000001,1) Primary Key,
+ContractID int Foreign Key References tblContract(ContractID),
+CustomerID int Foreign Key References tblCustomer(CustomerID),
+SensorID int Foreign Key References tblSensor(SensorID),
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+ViewCount int default 0,
+Direction int, 
+);
+
+create table tblPlatinum(
+PID int Identity (000001,1) Primary Key,
+ContractID int Foreign Key References tblContract(ContractID),
+CustomerID int Foreign Key References tblCustomer(CustomerID),
+SensorID int Foreign Key References tblSensor(SensorID),
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+ViewCount int default 0,
+Direction int,
+DataID int Foreign Key References tblData(DataID),
+);
+
+create table tblSuperPlatinum(
+PID int Identity (000001,1) Primary Key,
+ContractID int Foreign Key References tblContract(ContractID),
+CustomerID int Foreign Key References tblCustomer(CustomerID),
+SensorID int Foreign Key References tblSensor(SensorID),
+EmployeeID int Foreign Key References tblEmployee(EmployeeID),
+ViewCount int default 0,
+Direction int,
+DataID int Foreign Key References tblData(DataID),
+StreamID int Foreign Key References tblStream(StreamID)
+);
+
+alter table tblContract
+add constraint customerID
+Foreign Key (customerID) References tblCustomer(customerID);
+
+alter table tblContract
+add constraint sensorID
+Foreign Key (sensorID) References tblSensor(sensorID);
+
+end;
+go
+exec MakeTables;
+go
+
+Drop Procedure If exists InsertData;
+go 
+Create Procedure InsertData
+as
+begin
+
+Insert into Spaces.dbo.tblStream
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblPart
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblLocation
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblZoneType
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblRole
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblEmployee
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblCustomer (EmployeeID,Name,Email)
+Values
+(1,1,1),
+(2,2,2),
+(3,3,3),
+(4,4,4),
+(5,5,5),
+(6,6,6),
+(7,7,7),
+(8,8,8),
+(9,9,9),
+(10,10,10);
+
+Insert Into Spaces.dbo.tblContract (EmployeeID,CustomerID)
+Values
+(1,1),
+(2,2),
+(3,3),
+(4,4),
+(5,5),
+(6,6),
+(7,7),
+(8,8),
+(9,9),
+(10,10);
+
+
+
+Insert Into Spaces.dbo.tblSensor
+Values
+(1,1,1,1,1),
+(2,2,2,2,2),
+(3,3,3,3,3),
+(4,4,4,4,4),
+(5,5,5,5,5),
+(6,6,6,6,6),
+(7,7,7,7,7),
+(8,8,8,8,8),
+(9,9,9,9,9),
+(10,10,10,10,10);
+
+Insert Into Spaces.dbo.tblData
+Values
+(1,1,1),
+(2,2,2),
+(3,3,3),
+(4,4,4),
+(5,5,5),
+(6,6,6),
+(7,7,7),
+(8,8,8),
+(9,9,9),
+(10,10,10);
+
+Insert Into Spaces.dbo.tblSupplier
+Values
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10);
+
+Insert Into Spaces.dbo.tblStandard(ContractID,CustomerID,SensorID,EmployeeID)
+Values
+(1,1,1,1),
+(2,2,2,2),
+(3,3,3,3),
+(4,4,4,4),
+(5,5,5,5),
+(6,6,6,6),
+(7,7,7,7),
+(8,8,8,8),
+(9,9,9,9),
+(10,10,10,10);
+
+Insert Into Spaces.dbo.tblGold(ContractID,CustomerID,SensorID,EmployeeID)
+Values
+(1,1,1,1),
+(2,2,2,2),
+(3,3,3,3),
+(4,4,4,4),
+(5,5,5,5),
+(6,6,6,6),
+(7,7,7,7),
+(8,8,8,8),
+(9,9,9,9),
+(10,10,10,10);
+
+Insert Into Spaces.dbo.tblPlatinum(ContractID,CustomerID,SensorID,EmployeeID,DataID)
+Values
+(1,1,1,1,1),
+(2,2,2,2,2),
+(3,3,3,3,3),
+(4,4,4,4,4),
+(5,5,5,5,5),
+(6,6,6,6,6),
+(7,7,7,7,7),
+(8,8,8,8,8),
+(9,9,9,9,9),
+(10,10,10,10,10);
+
+Insert Into Spaces.dbo.tblSuperPlatinum(ContractID,CustomerID,SensorID,EmployeeID,DataID,StreamID)
+Values
+(1,1,1,1,1,1),
+(2,2,2,2,2,2),
+(3,3,3,3,3,3),
+(4,4,4,4,4,4),
+(5,5,5,5,5,5),
+(6,6,6,6,6,6),
+(7,7,7,7,7,7),
+(8,8,8,8,8,8),
+(9,9,9,9,9,9),
+(10,10,10,10,10,10);
+
+end;
+go
+Exec InsertData;
+go
+
+
+--queries--
+
+drop procedure if exists b;
+go
+create procedure b
+	@pEmployeeID as Int
+as
+begin
+	Select a.EmployeeID,b.Name,b.Email
+	From tblEmployee a
+		Join tblCustomer b on a.employeeID = b.employeeID
+	Where a.EmployeeID = @pEmployeeID
+end;
+go
+exec b '1';
+go
+
+drop procedure if exists c;
+go
+create procedure c 
+	@pSensorID as int
+as
+begin
+	select a.SensorID,a.LocationID, a.StreamID, b.Description
+	From tblSensor a
+	join tblStream b on a.StreamID = b.StreamID
+end;
+go
+exec c '1'
+go
+
+drop procedure if exists i;
+go
+create procedure i
+	@pContractID as int
+as
+begin
+	delete tblData
+	From tblData
+	-- join tblContract a.ContractID = b.ContractID
+	where ContractID = @pContractID
+end;
+go
+exec i '1'
+go
